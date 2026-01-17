@@ -1,0 +1,15 @@
+@startuml
+class TravelPlan {
+  - name : String
+  - type : PlanType
+  - adultSeats : int
+  - childSeats : int
+  - originCity : String
+  - destinationCity : String
+}
+
+enum PlanType {
+  NORMAL
+  WORK
+}
+@enduml

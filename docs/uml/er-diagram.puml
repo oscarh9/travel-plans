@@ -1,0 +1,20 @@
+@startuml
+entity TravelPlan {
+  * name : String <<PK>>
+  --
+  type : String
+  adultSeats : Integer
+  childSeats : Integer
+  originCity : String
+  destinationCity : String
+}
+
+note top of TravelPlan
+  Validations:
+  1. name must be unique
+  2. type = "Normal" or "Work"
+  3. if type = "Work", childSeats = 0
+  4. adultSeats, childSeats ≥ 0
+  5. All fields required
+end note
+@enduml
