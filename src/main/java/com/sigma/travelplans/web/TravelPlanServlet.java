@@ -25,11 +25,20 @@ public class TravelPlanServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        String action = request.getParameter("action");
+
+        if ("edit".equals(action)) {
+            String name = request.getParameter("name");
+            TravelPlan plan = travelPlanService.findByName(name);
+            request.setAttribute("plan", plan);
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            return;
+        }
+
         request.setAttribute("plans", travelPlanService.findAll());
         request.getRequestDispatcher("/list.jsp")
                 .forward(request, response);
     }
-
 
     @Override
     protected void doPost(
@@ -65,7 +74,11 @@ public class TravelPlanServlet extends HttpServlet {
                     destinationCity
             );
 
-            travelPlanService.add(travelPlan);
+            if ("update".equals(action)) {
+                travelPlanService.update(travelPlan);
+            } else {
+                travelPlanService.add(travelPlan);
+            }
 
             response.sendRedirect(request.getContextPath() + "/travel-plans");
 
