@@ -4,4 +4,13 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+    <servlet>
+        <servlet-name>TravelPlanServlet</servlet-name>
+        <servlet-class>com.sigma.travelplans.web.TravelPlanServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TravelPlanServlet</servlet-name>
+        <url-pattern>/travel-plans</url-pattern>
+    </servlet-mapping>
 </web-app>
