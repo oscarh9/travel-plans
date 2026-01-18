@@ -1,5 +1,7 @@
 package com.sigma.travelplans.web;
 
+import com.sigma.travelplans.domain.PlanType;
+import com.sigma.travelplans.domain.TravelPlan;
 import com.sigma.travelplans.domain.service.TravelPlanService;
 
 import javax.servlet.ServletException;
@@ -32,6 +34,33 @@ public class TravelPlanServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        response.setStatus(HttpServletResponse.SC_OK);
+        try {
+            String name = request.getParameter("name");
+            String typeParam = request.getParameter("type");
+            String originCity = request.getParameter("originCity");
+            String destinationCity = request.getParameter("destinationCity");
+            int adultSeats = Integer.parseInt(request.getParameter("adultSeats"));
+            int childSeats = Integer.parseInt(request.getParameter("childSeats"));
+
+            PlanType type = PlanType.valueOf(typeParam);
+
+            TravelPlan travelPlan = new TravelPlan(
+                    name,
+                    type,
+                    adultSeats,
+                    childSeats,
+                    originCity,
+                    destinationCity
+            );
+
+            travelPlanService.add(travelPlan);
+
+            response.sendRedirect(request.getContextPath() + "/travel-plans");
+
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("error", e.getMessage());
+            request.getRequestDispatcher("/index.jsp")
+                    .forward(request, response);
+        }
     }
 }
