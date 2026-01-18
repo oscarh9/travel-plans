@@ -15,6 +15,7 @@
         <th>Destino</th>
         <th>Adultos</th>
         <th>Niños</th>
+        <th>Acciones</th>
     </tr>
 <%
     Collection<TravelPlan> plans =
@@ -30,6 +31,13 @@
         <td><%= plan.getDestinationCity() %></td>
         <td><%= plan.getAdultSeats() %></td>
         <td><%= plan.getChildSeats() %></td>
+        <td>
+            <form method="post" action="<%= request.getContextPath() %>/travel-plans">
+                <input type="hidden" name="action" value="delete"/>
+                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
+                <button type="submit">Eliminar</button>
+            </form>
+        </td>
     </tr>
 <%
         }
