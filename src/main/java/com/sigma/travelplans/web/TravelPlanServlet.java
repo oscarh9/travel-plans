@@ -25,8 +25,11 @@ public class TravelPlanServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        response.setStatus(HttpServletResponse.SC_OK);
+        request.setAttribute("plans", travelPlanService.findAll());
+        request.getRequestDispatcher("/list.jsp")
+                .forward(request, response);
     }
+
 
     @Override
     protected void doPost(
