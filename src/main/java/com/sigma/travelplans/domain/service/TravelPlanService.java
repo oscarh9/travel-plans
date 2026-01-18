@@ -54,4 +54,16 @@ public class TravelPlanService {
     public Collection<TravelPlan> findAll() {
         return travelPlans.values();
     }
+
+    public void remove(String name) {
+        if (isBlank(name)) {
+            throw new IllegalArgumentException("El nombre del plan es obligatorio");
+        }
+
+        if (!travelPlans.containsKey(name)) {
+            throw new IllegalArgumentException("El plan no existe");
+        }
+
+        travelPlans.remove(name);
+    }
 }

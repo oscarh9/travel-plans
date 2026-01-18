@@ -37,6 +37,15 @@ public class TravelPlanServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
+        String action = request.getParameter("action");
+
+        if ("delete".equals(action)) {
+            String name = request.getParameter("name");
+            travelPlanService.remove(name);
+            response.sendRedirect(request.getContextPath() + "/travel-plans");
+            return;
+        }
+
         try {
             String name = request.getParameter("name");
             String typeParam = request.getParameter("type");
