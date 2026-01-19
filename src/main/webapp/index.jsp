@@ -56,7 +56,7 @@
         <h2><%= editing ? "✏️ Editar Plan" : "➕ Nuevo Plan" %></h2>
 
         <form method="post" action="travel-plans" class="form-horizontal">
-            <input type="hidden" name="action" value="<%= editing ? "update" : "create" %>"/>
+            <input type="hidden" name="action" value="<%= editing ? "update" : "" %>"/>
 
             <div class="form-group">
                 <label class="col-sm-2 control-label">Nombre:</label>
