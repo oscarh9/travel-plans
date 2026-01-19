@@ -10,95 +10,215 @@
     Collection<TravelPlan> allPlans = (Collection<TravelPlan>) request.getAttribute("plans");
     Map<String, List<TravelPlan>> groupedPlans = (Map<String, List<TravelPlan>>) request.getAttribute("groupedPlans");
     List<TravelPlan> uniquePlans = (List<TravelPlan>) request.getAttribute("uniquePlans");
+
     boolean isGroupedView = groupedPlans != null;
 %>
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gestión de Planes de Viaje</title>
+    <!-- Bootstrap 3.4.1 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
-    <h1>Gestión de Planes de Viaje</h1>
+<div class="container">
+    <!-- Header -->
+    <div class="header-section">
+        <h1 class="text-primary">Gestión de Planes de Viaje</h1>
+        <p class="lead">Crea y gestiona tus planes de viaje</p>
+    </div>
 
-    <!-- Formulario -->
-    <h2><%= editing ? "Editar Plan" : "Nuevo Plan" %></h2>
-
+    <!-- Messages -->
     <% if (error != null) { %>
-        <p style="color: red;"><%= error %></p>
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>Error:</strong> <%= error %>
+        </div>
     <% } %>
 
     <% if (success != null) { %>
-        <p style="color: green;"><%= success %></p>
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <strong>Éxito:</strong> <%= success %>
+        </div>
     <% } %>
 
-    <form method="post" action="travel-plans">
-        <input type="hidden" name="action" value="<%= editing ? "update" : "create" %>"/>
+    <!-- Form Section -->
+    <div class="form-section">
+        <h2><%= editing ? "✏️ Editar Plan" : "➕ Nuevo Plan" %></h2>
 
-        <div>
-            <label>Nombre:</label><br>
-            <input type="text" name="name" value="<%= editing ? editPlan.getName() : "" %>" <%= editing ? "readonly" : "" %> required>
-        </div>
+        <form method="post" action="travel-plans" class="form-horizontal">
+            <input type="hidden" name="action" value="<%= editing ? "update" : "create" %>"/>
 
-        <div>
-            <label>Tipo:</label><br>
-            <select name="type" required>
-                <option value="">Seleccionar...</option>
-                <option value="NORMAL" <%= editing && "NORMAL".equals(editPlan.getType().name()) ? "selected" : "" %>>Normal</option>
-                <option value="WORK" <%= editing && "WORK".equals(editPlan.getType().name()) ? "selected" : "" %>>Trabajo</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Nombre:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="name" class="form-control"
+                           value="<%= editing ? editPlan.getName() : "" %>"
+                           <%= editing ? "readonly" : "" %>
+                           required placeholder="Nombre del plan">
+                </div>
+            </div>
 
-        <div>
-            <label>Origen:</label><br>
-            <input type="text" name="originCity" value="<%= editing ? editPlan.getOriginCity() : "" %>" required>
-        </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Tipo:</label>
+                <div class="col-sm-10">
+                    <select name="type" class="form-control" required>
+                        <option value="">Seleccionar tipo...</option>
+                        <option value="NORMAL" <%= editing && "NORMAL".equals(editPlan.getType().name()) ? "selected" : "" %>>Normal</option>
+                        <option value="WORK" <%= editing && "WORK".equals(editPlan.getType().name()) ? "selected" : "" %>>Trabajo</option>
+                    </select>
+                </div>
+            </div>
 
-        <div>
-            <label>Destino:</label><br>
-            <input type="text" name="destinationCity" value="<%= editing ? editPlan.getDestinationCity() : "" %>" required>
-        </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Origen:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="originCity" class="form-control"
+                           value="<%= editing ? editPlan.getOriginCity() : "" %>"
+                           required placeholder="Ciudad de origen">
+                </div>
+            </div>
 
-        <div>
-            <label>Adultos:</label><br>
-            <input type="number" name="adultSeats" value="<%= editing ? editPlan.getAdultSeats() : "" %>" min="0" required>
-        </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Destino:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="destinationCity" class="form-control"
+                           value="<%= editing ? editPlan.getDestinationCity() : "" %>"
+                           required placeholder="Ciudad de destino">
+                </div>
+            </div>
 
-        <div>
-            <label>Niños:</label><br>
-            <input type="number" name="childSeats" value="<%= editing ? editPlan.getChildSeats() : "" %>" min="0" required>
-        </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Adultos:</label>
+                <div class="col-sm-10">
+                    <input type="number" name="adultSeats" class="form-control"
+                           value="<%= editing ? editPlan.getAdultSeats() : "" %>"
+                           min="0" required placeholder="Número de adultos">
+                </div>
+            </div>
 
-        <div>
-            <button type="submit"><%= editing ? "Actualizar" : "Crear" %></button>
-            <% if (editing) { %>
-                <a href="travel-plans">Cancelar</a>
-            <% } %>
-        </div>
-    </form>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Niños:</label>
+                <div class="col-sm-10">
+                    <input type="number" name="childSeats" class="form-control"
+                           value="<%= editing ? editPlan.getChildSeats() : "" %>"
+                           min="0" required placeholder="Número de niños">
+                </div>
+            </div>
 
-    <!-- Botones de Agrupación -->
-    <div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn <%= editing ? "btn-warning" : "btn-success" %>">
+                        <%= editing ? "📝 Actualizar Plan" : "✅ Crear Plan" %>
+                    </button>
+                    <% if (editing) { %>
+                        <a href="travel-plans" class="btn btn-default">❌ Cancelar</a>
+                    <% } %>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grouping Buttons -->
+    <div class="action-buttons text-center">
         <% if (!isGroupedView) { %>
-            <form method="get" action="travel-plans" style="display: inline;">
+            <form method="get" action="travel-plans" class="inline-form">
                 <input type="hidden" name="view" value="grouped"/>
-                <button type="submit">Agrupar Planes Compatibles</button>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    🔗 Agrupar Planes Compatibles
+                </button>
             </form>
         <% } else { %>
-            <form method="get" action="travel-plans" style="display: inline;">
-                <button type="submit">Ver Todos los Planes</button>
+            <form method="get" action="travel-plans" class="inline-form">
+                <button type="submit" class="btn btn-info btn-lg">
+                    📋 Ver Todos los Planes
+                </button>
             </form>
         <% } %>
     </div>
 
-    <!-- Tablas -->
-    <% if (isGroupedView) { %>
-        <!-- Vista Agrupada -->
-        <h2>Planes Compatibles Agrupados</h2>
+    <!-- Tables Section -->
+    <div class="table-section">
+        <% if (isGroupedView) { %>
+            <!-- Grouped View -->
+            <div class="page-header">
+                <h2>📊 Planes Compatibles Agrupados</h2>
+            </div>
 
-        <% if (groupedPlans != null && !groupedPlans.isEmpty()) { %>
-            <% for (Map.Entry<String, List<TravelPlan>> group : groupedPlans.entrySet()) {
-                if (group.getValue().size() > 1) { %>
-                    <h3>Grupo: <%= group.getKey() %> (<%= group.getValue().size() %> planes)</h3>
-                    <table border="1">
+            <% if (groupedPlans != null && !groupedPlans.isEmpty()) { %>
+                <% for (Map.Entry<String, List<TravelPlan>> group : groupedPlans.entrySet()) {
+                    if (group.getValue().size() > 1) { %>
+                        <div class="group-header">
+                            <h4><%= group.getKey() %></h4>
+                        </div>
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Origen</th>
+                                    <th>Destino</th>
+                                    <th>Adultos</th>
+                                    <th>Niños</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (TravelPlan plan : group.getValue()) { %>
+                                    <tr>
+                                        <td><strong><%= plan.getName() %></strong></td>
+                                        <td>
+                                            <span class="label <%= plan.getType().name().equals("WORK") ? "label-danger" : "label-success" %>">
+                                                <%= plan.getType() %>
+                                            </span>
+                                        </td>
+                                        <td><%= plan.getOriginCity() %></td>
+                                        <td><%= plan.getDestinationCity() %></td>
+                                        <td><span class="badge"><%= plan.getAdultSeats() %></span></td>
+                                        <td><span class="badge"><%= plan.getChildSeats() %></span></td>
+                                        <td>
+                                            <form method="get" action="travel-plans" class="inline-form">
+                                                <input type="hidden" name="action" value="edit"/>
+                                                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
+                                                <button type="submit" class="btn btn-warning btn-xs">✏️ Editar</button>
+                                            </form>
+                                            <form method="post" action="travel-plans" class="inline-form">
+                                                <input type="hidden" name="action" value="delete"/>
+                                                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
+                                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('¿Eliminar este plan?')">🗑️ Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                        <br>
+                    <% } %>
+                <% } %>
+            <% } else { %>
+                <div class="alert alert-info">
+                    <strong>Información:</strong> No hay grupos de planes compatibles.
+                </div>
+            <% } %>
+
+            <!-- Unique Plans -->
+            <div class="page-header">
+                <h2>⭐ Planes Únicos</h2>
+                <p class="lead">Planes sin compatibilidad con otros</p>
+            </div>
+
+            <% if (uniquePlans != null && !uniquePlans.isEmpty()) { %>
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
                         <tr>
                             <th>Nombre</th>
                             <th>Tipo</th>
@@ -108,117 +228,101 @@
                             <th>Niños</th>
                             <th>Acciones</th>
                         </tr>
-                        <% for (TravelPlan plan : group.getValue()) { %>
+                    </thead>
+                    <tbody>
+                        <% for (TravelPlan plan : uniquePlans) { %>
                             <tr>
-                                <td><%= plan.getName() %></td>
-                                <td><%= plan.getType() %></td>
+                                <td><strong><%= plan.getName() %></strong></td>
+                                <td>
+                                    <span class="label <%= plan.getType().name().equals("WORK") ? "label-danger" : "label-success" %>">
+                                        <%= plan.getType() %>
+                                    </span>
+                                </td>
                                 <td><%= plan.getOriginCity() %></td>
                                 <td><%= plan.getDestinationCity() %></td>
-                                <td><%= plan.getAdultSeats() %></td>
-                                <td><%= plan.getChildSeats() %></td>
+                                <td><span class="badge"><%= plan.getAdultSeats() %></span></td>
+                                <td><span class="badge"><%= plan.getChildSeats() %></span></td>
                                 <td>
-                                    <form method="get" action="travel-plans" style="display: inline;">
+                                    <form method="get" action="travel-plans" class="inline-form">
                                         <input type="hidden" name="action" value="edit"/>
                                         <input type="hidden" name="name" value="<%= plan.getName() %>"/>
-                                        <button type="submit">Editar</button>
+                                        <button type="submit" class="btn btn-warning btn-xs">✏️ Editar</button>
                                     </form>
-                                    <form method="post" action="travel-plans" style="display: inline;">
+                                    <form method="post" action="travel-plans" class="inline-form">
                                         <input type="hidden" name="action" value="delete"/>
                                         <input type="hidden" name="name" value="<%= plan.getName() %>"/>
-                                        <button type="submit" onclick="return confirm('¿Eliminar?')">Eliminar</button>
+                                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('¿Eliminar este plan?')">🗑️ Eliminar</button>
                                     </form>
                                 </td>
                             </tr>
                         <% } %>
-                    </table>
-                    <br>
-                <% } %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="alert alert-info">
+                    <strong>Información:</strong> No hay planes únicos.
+                </div>
             <% } %>
-        <% } else { %>
-            <p>No hay grupos de planes compatibles.</p>
-        <% } %>
 
-        <!-- Planes Únicos -->
-        <h2>Planes Únicos</h2>
-        <% if (uniquePlans != null && !uniquePlans.isEmpty()) { %>
-            <table border="1">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Adultos</th>
-                    <th>Niños</th>
-                    <th>Acciones</th>
-                </tr>
-                <% for (TravelPlan plan : uniquePlans) { %>
-                    <tr>
-                        <td><%= plan.getName() %></td>
-                        <td><%= plan.getType() %></td>
-                        <td><%= plan.getOriginCity() %></td>
-                        <td><%= plan.getDestinationCity() %></td>
-                        <td><%= plan.getAdultSeats() %></td>
-                        <td><%= plan.getChildSeats() %></td>
-                        <td>
-                            <form method="get" action="travel-plans" style="display: inline;">
-                                <input type="hidden" name="action" value="edit"/>
-                                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
-                                <button type="submit">Editar</button>
-                            </form>
-                            <form method="post" action="travel-plans" style="display: inline;">
-                                <input type="hidden" name="action" value="delete"/>
-                                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
-                                <button type="submit" onclick="return confirm('¿Eliminar?')">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                <% } %>
-            </table>
         <% } else { %>
-            <p>No hay planes únicos.</p>
-        <% } %>
+            <!-- Normal View -->
+            <div class="page-header">
+                <h2>📋 Todos los Planes <span class="badge"><%= allPlans != null ? allPlans.size() : 0 %></span></h2>
+            </div>
 
-    <% } else { %>
-        <!-- Vista Normal -->
-        <h2>Todos los Planes (<%= allPlans != null ? allPlans.size() : 0 %>)</h2>
-
-        <% if (allPlans != null && !allPlans.isEmpty()) { %>
-            <table border="1">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Adultos</th>
-                    <th>Niños</th>
-                    <th>Acciones</th>
-                </tr>
-                <% for (TravelPlan plan : allPlans) { %>
-                    <tr>
-                        <td><%= plan.getName() %></td>
-                        <td><%= plan.getType() %></td>
-                        <td><%= plan.getOriginCity() %></td>
-                        <td><%= plan.getDestinationCity() %></td>
-                        <td><%= plan.getAdultSeats() %></td>
-                        <td><%= plan.getChildSeats() %></td>
-                        <td>
-                            <form method="get" action="travel-plans" style="display: inline;">
-                                <input type="hidden" name="action" value="edit"/>
-                                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
-                                <button type="submit">Editar</button>
-                            </form>
-                            <form method="post" action="travel-plans" style="display: inline;">
-                                <input type="hidden" name="action" value="delete"/>
-                                <input type="hidden" name="name" value="<%= plan.getName() %>"/>
-                                <button type="submit" onclick="return confirm('¿Eliminar?')">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                <% } %>
-            </table>
-        <% } else { %>
-            <p>No hay planes creados.</p>
+            <% if (allPlans != null && !allPlans.isEmpty()) { %>
+                <table class="table table-bordered table-hover table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Adultos</th>
+                            <th>Niños</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (TravelPlan plan : allPlans) { %>
+                            <tr>
+                                <td><strong><%= plan.getName() %></strong></td>
+                                <td>
+                                    <span class="label <%= plan.getType().name().equals("WORK") ? "label-danger" : "label-success" %>">
+                                        <%= plan.getType() %>
+                                    </span>
+                                </td>
+                                <td><%= plan.getOriginCity() %></td>
+                                <td><%= plan.getDestinationCity() %></td>
+                                <td><span class="badge"><%= plan.getAdultSeats() %></span></td>
+                                <td><span class="badge"><%= plan.getChildSeats() %></span></td>
+                                <td>
+                                    <form method="get" action="travel-plans" class="inline-form">
+                                        <input type="hidden" name="action" value="edit"/>
+                                        <input type="hidden" name="name" value="<%= plan.getName() %>"/>
+                                        <button type="submit" class="btn btn-warning btn-xs">✏️ Editar</button>
+                                    </form>
+                                    <form method="post" action="travel-plans" class="inline-form">
+                                        <input type="hidden" name="action" value="delete"/>
+                                        <input type="hidden" name="name" value="<%= plan.getName() %>"/>
+                                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('¿Eliminar este plan?')">🗑️ Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="alert alert-warning">
+                    <strong>Atención:</strong> No hay planes de viaje creados. ¡Crea el primero!
+                </div>
+            <% } %>
         <% } %>
-    <% } %>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </body>
 </html>
