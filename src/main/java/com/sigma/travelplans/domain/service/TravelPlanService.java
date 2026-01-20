@@ -1,22 +1,12 @@
 package com.sigma.travelplans.domain.service;
 
+import com.sigma.travelplans.TravelPlanConstants;
 import com.sigma.travelplans.domain.PlanType;
 import com.sigma.travelplans.domain.TravelPlan;
 
 import java.util.*;
 
 public class TravelPlanService {
-
-    private static final String ERROR_PLAN_NULL = "El plan no puede ser nulo";
-    private static final String ERROR_ALL_FIELDS_REQUIRED = "Todos los campos son obligatorios";
-    private static final String ERROR_SEATS_POSITIVE = "Los asientos deben ser cero o un número positivo";
-    private static final String ERROR_WORK_NO_CHILD_SEATS = "Los planes de trabajo no pueden tener asientos para niños";
-    private static final String ERROR_DUPLICATE_NAME = "No pueden haber dos planes con el mismo nombre";
-    private static final String ERROR_PLAN_NOT_EXIST = "El plan no existe";
-    private static final String ERROR_NAME_REQUIRED = "El nombre del plan es obligatorio";
-
-    private static final String KEY_GROUPED = "grouped";
-    private static final String KEY_UNIQUE = "unique";
 
     private static final String COMPATIBILITY_KEY_SEPARATOR = "\\|";
 
@@ -26,7 +16,7 @@ public class TravelPlanService {
         validate(travelPlan);
 
         if (travelPlans.containsKey(travelPlan.getName())) {
-            throw new IllegalArgumentException(ERROR_DUPLICATE_NAME);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_DUPLICATE_NAME);
         }
 
         travelPlans.put(travelPlan.getName(), travelPlan);
@@ -36,7 +26,7 @@ public class TravelPlanService {
         validate(travelPlan);
 
         if (!travelPlans.containsKey(travelPlan.getName())) {
-            throw new IllegalArgumentException(ERROR_PLAN_NOT_EXIST);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_PLAN_NOT_EXIST);
         }
 
         travelPlans.put(travelPlan.getName(), travelPlan);
@@ -46,7 +36,7 @@ public class TravelPlanService {
         validateName(name);
 
         if (!travelPlans.containsKey(name)) {
-            throw new IllegalArgumentException(ERROR_PLAN_NOT_EXIST);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_PLAN_NOT_EXIST);
         }
 
         travelPlans.remove(name);
@@ -99,14 +89,14 @@ public class TravelPlanService {
     private Map<String, Object> createResultMap(Map<String, List<TravelPlan>> grouped,
                                                 List<TravelPlan> unique) {
         Map<String, Object> result = new HashMap<>();
-        result.put(KEY_GROUPED, grouped);
-        result.put(KEY_UNIQUE, unique);
+        result.put(TravelPlanConstants.KEY_GROUPED, grouped);
+        result.put(TravelPlanConstants.KEY_UNIQUE, unique);
         return result;
     }
 
     private void validate(TravelPlan travelPlan) {
         if (travelPlan == null) {
-            throw new IllegalArgumentException(ERROR_PLAN_NULL);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_PLAN_NULL);
         }
 
         validateRequiredFields(travelPlan);
@@ -117,25 +107,25 @@ public class TravelPlanService {
     private void validateRequiredFields(TravelPlan travelPlan) {
         if (isBlank(travelPlan.getName()) || travelPlan.getType() == null ||
                 isBlank(travelPlan.getOriginCity()) || isBlank(travelPlan.getDestinationCity())) {
-            throw new IllegalArgumentException(ERROR_ALL_FIELDS_REQUIRED);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_ALL_FIELDS_REQUIRED);
         }
     }
 
     private void validateSeats(TravelPlan travelPlan) {
         if (travelPlan.getAdultSeats() < 0 || travelPlan.getChildSeats() < 0) {
-            throw new IllegalArgumentException(ERROR_SEATS_POSITIVE);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_SEATS_POSITIVE);
         }
     }
 
     private void validateWorkPlanChildSeats(TravelPlan travelPlan) {
         if (travelPlan.getType() == PlanType.WORK && travelPlan.getChildSeats() > 0) {
-            throw new IllegalArgumentException(ERROR_WORK_NO_CHILD_SEATS);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_WORK_NO_CHILD_SEATS);
         }
     }
 
     private void validateName(String name) {
         if (isBlank(name)) {
-            throw new IllegalArgumentException(ERROR_NAME_REQUIRED);
+            throw new IllegalArgumentException(TravelPlanConstants.ERROR_NAME_REQUIRED);
         }
     }
 
